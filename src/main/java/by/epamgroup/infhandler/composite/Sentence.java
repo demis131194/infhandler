@@ -6,6 +6,11 @@ import java.util.List;
 public class Sentence implements Component {
     private List<Component> components = new ArrayList<>();
 
+    @Override
+    public void addComponent(Component component) {
+        components.add(component);
+    }
+
     public String collect() {
         StringBuilder builder = new StringBuilder();
         components.forEach(component -> builder.append(component.collect()).append(" "));
