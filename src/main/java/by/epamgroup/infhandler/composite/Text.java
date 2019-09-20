@@ -5,10 +5,12 @@ import java.util.List;
 
 public class Text implements Component {
 
-    List<Component> components = new ArrayList<>();
+    private List<Component> components = new ArrayList<>();
 
     @Override
-    public void operation() {
-
+    public String collect() {
+        StringBuilder builder = new StringBuilder();
+        components.forEach(component -> builder.append("%t").append(component.collect()).append("%n"));
+        return builder.toString();
     }
 }

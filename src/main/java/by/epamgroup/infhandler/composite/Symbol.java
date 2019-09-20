@@ -1,8 +1,10 @@
 package by.epamgroup.infhandler.composite;
 
 public class Symbol implements Component {
-    @Override
-    public void operation() {
+    private String symbol;
 
+    @Override
+    public String collect() {
+        return symbol;
     }
 }

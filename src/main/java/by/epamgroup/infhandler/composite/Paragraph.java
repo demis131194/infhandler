@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Paragraph implements Component {
-    List<Component> components = new ArrayList<>();
+    private List<Component> components = new ArrayList<>();
 
     @Override
-    public void operation() {
-
+    public String collect() {
+        StringBuilder builder = new StringBuilder();
+        components.forEach(component -> builder.append(component.collect()).append(" "));
+        builder.deleteCharAt(builder.lastIndexOf(" "));
+        return builder.toString();
     }
 }

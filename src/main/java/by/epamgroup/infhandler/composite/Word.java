@@ -1,9 +1,10 @@
 package by.epamgroup.infhandler.composite;
 
 public class Word implements Component {
+    private String word;
 
     @Override
-    public void operation() {
-
+    public String collect() {
+        return word;
     }
 }
