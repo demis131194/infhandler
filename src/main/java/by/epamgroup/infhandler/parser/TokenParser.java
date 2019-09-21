@@ -7,13 +7,13 @@ import java.util.regex.Pattern;
 
 public class TokenParser implements Parser {
     private static final String WORD_SYMBOL_MATCHER = "\\(?([\\w-']+)?\\)?(\\p{Punct}|\\.{3})?";
-    private static final String WORD_SYMBOL_REGEX = "(\\w+)|\\p{Punct}|\\.{3}";
+    private static final String WORD_SYMBOL_REGEX = "([\\w-]+)|\\p{Punct}|\\.{3}";
     private static final String EXPRESSION_REGEX = "([\\p{Punct}\\d]{3,})";
     private static final Pattern WORD_SYMBOL_PATTERN = Pattern.compile(WORD_SYMBOL_REGEX);
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile(EXPRESSION_REGEX);
 
     @Override
-    public Component parse(String component) {
+    public Token parse(String component) {
         Matcher matcher;
         Token token = new Token();
 
@@ -22,7 +22,7 @@ public class TokenParser implements Parser {
             while (matcher.find()) {
                 String str = matcher.group();
 
-                if (str.matches("\\w+")) {
+                if (str.matches("\\w([\\w-]+)?")) {
                     token.addComponent(new Word(str));
                 } else if (str.matches("\\p{Punct}{1,3}")) {
                     token.addComponent(new Symbol(str));

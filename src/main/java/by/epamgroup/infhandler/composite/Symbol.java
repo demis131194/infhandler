@@ -1,5 +1,7 @@
 package by.epamgroup.infhandler.composite;
 
+import java.util.List;
+
 public class Symbol implements Component {
     private String symbol;
 
@@ -9,6 +11,11 @@ public class Symbol implements Component {
 
     @Override
     public void addComponent(Component component) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Component> getComponents() {
         throw new UnsupportedOperationException();
     }
 

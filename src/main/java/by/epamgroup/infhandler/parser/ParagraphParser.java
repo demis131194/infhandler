@@ -12,7 +12,7 @@ public class ParagraphParser implements Parser {
     private Parser nextParser = new SentenceParser();
 
     @Override
-    public Component parse(String component) {
+    public Paragraph parse(String component) {
         Matcher matcher = pattern.matcher(component);
         Paragraph paragraph = new Paragraph();
 

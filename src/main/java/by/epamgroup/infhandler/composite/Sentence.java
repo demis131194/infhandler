@@ -11,6 +11,11 @@ public class Sentence implements Component {
         components.add(component);
     }
 
+    @Override
+    public List<Component> getComponents() {
+        return components;
+    }
+
     public String collect() {
         StringBuilder builder = new StringBuilder();
         components.forEach(component -> builder.append(component.collect()).append(" "));

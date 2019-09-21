@@ -11,7 +11,7 @@ public class TextParser implements Parser {
     private Parser nextParser = new ParagraphParser();
 
     @Override
-    public Component parse(String component) {
+    public Text parse(String component) {
         Text text = new Text();
         component = component.trim();
         String[] paragraphs = component.split(PARAGRAPH_SPLIT);

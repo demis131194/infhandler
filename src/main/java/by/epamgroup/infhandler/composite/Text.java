@@ -12,6 +12,11 @@ public class Text implements Component {
     }
 
     @Override
+    public List<Component> getComponents() {
+        return components;
+    }
+
+    @Override
     public String collect() {
         StringBuilder builder = new StringBuilder();
         components.forEach(component -> builder.append("\t").append(component.collect()).append("\n"));

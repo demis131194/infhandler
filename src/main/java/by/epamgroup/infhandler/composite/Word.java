@@ -1,5 +1,7 @@
 package by.epamgroup.infhandler.composite;
 
+import java.util.List;
+
 public class Word implements Component {
     private String word;
 
@@ -7,9 +9,18 @@ public class Word implements Component {
         this.word = word;
     }
 
+    public void setWord(String word) {
+        this.word = word;
+    }
+
     @Override
     public String collect() {
         return word;
+    }
+
+    @Override
+    public List<Component> getComponents() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

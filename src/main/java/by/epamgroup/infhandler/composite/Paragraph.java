@@ -12,6 +12,11 @@ public class Paragraph implements Component {
     }
 
     @Override
+    public List<Component> getComponents() {
+        return components;
+    }
+
+    @Override
     public String collect() {
         StringBuilder builder = new StringBuilder();
         components.forEach(component -> builder.append(component.collect()).append(" "));
