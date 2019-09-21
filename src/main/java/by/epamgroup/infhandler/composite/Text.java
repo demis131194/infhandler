@@ -14,7 +14,8 @@ public class Text implements Component {
     @Override
     public String collect() {
         StringBuilder builder = new StringBuilder();
-        components.forEach(component -> builder.append("%t").append(component.collect()).append("%n"));
+        components.forEach(component -> builder.append("\t").append(component.collect()).append("\n"));
+        builder.deleteCharAt(builder.lastIndexOf("\n"));
         return builder.toString();
     }
 }

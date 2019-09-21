@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ParagraphParser implements Parser {
-    private static final String SENTENCE_REGEX = "(\\p{Alnum}|\\s).+?(!|\\?|\\.{1,3})";
+    private static final String SENTENCE_REGEX = "\\p{Alnum}.+?(!|\\?|\\.{3}|\\.)";
     private static Pattern pattern = Pattern.compile(SENTENCE_REGEX);
     private Parser nextParser = new SentenceParser();
 

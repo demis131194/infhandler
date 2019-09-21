@@ -14,13 +14,7 @@ public class Token implements Component {
     @Override
     public String collect() {
         StringBuilder builder = new StringBuilder();
-        components.forEach(component -> {
-            if (component.getClass() == Symbol.class) {
-                builder.deleteCharAt(builder.lastIndexOf(" "));
-            }
-            builder.append(component.collect()).append(" ");
-        });
-        builder.deleteCharAt(builder.lastIndexOf(" "));
+        components.forEach(component -> builder.append(component.collect()));
         return builder.toString();
     }
 }
