@@ -1,12 +1,10 @@
 package by.epamgroup.infhandler.handler;
 
 import by.epamgroup.infhandler.comporator.ComponentCountComparator;
-import by.epamgroup.infhandler.comporator.ComponentLengthComparator;
 import by.epamgroup.infhandler.composite.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.net.ssl.CertPathTrustManagerParameters;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,6 +25,13 @@ public class ComponentHandler {
     }
 
     public static Text sortSentenceByWordCount(Text text) {
+        List<Component> paragraphs = text.getComponents();
+
+        for (Component paragraph : paragraphs) {
+            List<Component> sentences = paragraph.getComponents();
+
+            sentences.sort(Comparator.comparingInt(o -> getTokensWhichContainWordFromSentence(o).size()));
+        }
 
         return text;
     }
