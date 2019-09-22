@@ -1,8 +1,11 @@
 package by.epamgroup.infhandler.composite;
 
+import by.epamgroup.infhandler.interpreter.Client;
+
 import java.util.List;
 
 public class Expression implements Component {
+    private static Client client = new Client();
     private String expression;
 
     public Expression(String expression) {
@@ -21,6 +24,7 @@ public class Expression implements Component {
 
     @Override
     public String collect() {
-        return expression;
+        int result = client.calculate(expression).interpret();
+        return String.valueOf(result);
     }
 }

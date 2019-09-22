@@ -4,23 +4,33 @@ import by.epamgroup.infhandler.util.Cursor;
 
 public class Client {
 
-    public Expression evaluate(String expression) {
+    public Expression calculate(String expression) {
         expression = expression.replaceAll(">>", ">");
         expression = expression.replaceAll("<<", "<");
+        return evaluate(expression);
+    }
+
+    private Expression evaluate(String expression) {
 
         while (!expression.matches("-?[\\d]+")) {
 
-            if (expression.contains("~")) {
+            while (expression.contains(Operation.NOT.getOperation())) {
                 expression = executeOperation(expression, Operation.NOT);
             }
-            if (expression.contains(">")) {
-                expression = rightShiftBitOperation(expression);
+            while (expression.contains(Operation.RIGHT_SHIFT.getOperation())) {
+                expression = executeOperation(expression, Operation.RIGHT_SHIFT);
             }
-            if (expression.contains("<")) {
-                expression = leftShiftBitOperation(expression);
+            while (expression.contains(Operation.LEFT_SHIFT.getOperation())) {
+                expression = executeOperation(expression, Operation.LEFT_SHIFT);
             }
-            if (expression.contains("&")) {
-                expression = andOperation(expression);
+            while (expression.contains(Operation.AND.getOperation())) {
+                expression = executeOperation(expression, Operation.AND);
+            }
+            while (expression.contains(Operation.XOR.getOperation())) {
+                expression = executeOperation(expression, Operation.XOR);
+            }
+            while (expression.contains(Operation.OR.getOperation())) {
+                expression = executeOperation(expression, Operation.OR);
             }
 
         }
@@ -59,66 +69,18 @@ public class Client {
             case AND:
                 resultExpression = new AndExpression(leftExpression, rightExpression);
                 break;
+            case XOR:
+                resultExpression = new XorExpression(leftExpression, rightExpression);
+                break;
+            case OR:
+                resultExpression = new OrExpression(leftExpression, rightExpression);
+                break;
         }
 
         int result = resultExpression.interpret();
         String replacedPartExpression = expression.substring(cursor.getLeftCursor(), cursor.getRightCursor());
         return expression.replace(replacedPartExpression, String.valueOf(result));
     }
-
-    private String andOperation(String expression) {
-        int operatorCursor = expression.indexOf('&');
-        Cursor cursor = new Cursor(operatorCursor - 1, operatorCursor + 1, operatorCursor);
-
-        Expression leftExpression = getLeftExpression(expression, cursor);
-        Expression rightExpression = getRightExpression(expression, cursor);
-
-        Expression resultExpression = new LeftBitShiftExpression(leftExpression, rightExpression);
-        int result = resultExpression.interpret();
-        String replacedPartExpression = expression.substring(cursor.getLeftCursor(), cursor.getRightCursor());
-        return expression.replace(replacedPartExpression, String.valueOf(result));
-    }
-
-    private String notOperation(String expression) {
-        int operatorCursor = expression.indexOf('~');
-        Cursor cursor = new Cursor(operatorCursor, operatorCursor + 1, operatorCursor);
-
-        Expression rightExpression = getRightExpression(expression, cursor);
-
-        Expression resultExpression = new NotExpression(rightExpression);
-        int result = resultExpression.interpret();
-        String replacedPartExpression = expression.substring(cursor.getLeftCursor(), cursor.getRightCursor());
-        return expression.replace(replacedPartExpression, String.valueOf(result));
-    }
-
-    private String leftShiftBitOperation(String expression) {
-        int operatorCursor = expression.indexOf('<');
-        Cursor cursor = new Cursor(operatorCursor - 1, operatorCursor + 1, operatorCursor);
-
-        Expression leftExpression = getLeftExpression(expression, cursor);
-        Expression rightExpression = getRightExpression(expression, cursor);
-
-        Expression resultExpression = new LeftBitShiftExpression(leftExpression, rightExpression);
-        int result = resultExpression.interpret();
-        String replacedPartExpression = expression.substring(cursor.getLeftCursor(), cursor.getRightCursor());
-        return expression.replace(replacedPartExpression, String.valueOf(result));
-    }
-
-
-    private String rightShiftBitOperation(String expression) {
-        int operatorCursor = expression.indexOf('>');
-        Cursor cursor = new Cursor(operatorCursor - 1, operatorCursor + 1, operatorCursor);
-
-        Expression leftExpression = getLeftExpression(expression, cursor);
-        Expression rightExpression = getRightExpression(expression, cursor);
-
-        Expression resultExpression = new RightBitShiftExpression(leftExpression, rightExpression);
-        int result = resultExpression.interpret();
-        String replacedPartExpression = expression.substring(cursor.getLeftCursor(), cursor.getRightCursor());
-        return expression.replace(replacedPartExpression, String.valueOf(result));
-    }
-
-
 
     private Expression getRightExpression(String expression, Cursor cursor) {
         int rightCursor = cursor.getRightCursor();
@@ -129,16 +91,11 @@ public class Client {
         if (Character.isDigit(rightChar)) {
 
             try {
-                while (Character.isDigit(rightChar)) {
+                while (Character.isDigit(rightChar) || rightChar == '-') {
                     rightChar = expression.charAt(++rightCursor);
                 }
 
-                if (rightChar == ')') {
-                    cursor.setRightCursor(rightCursor + 1);
-                } else {
-                    cursor.setRightCursor(rightCursor);
-                }
-
+                cursor.setRightCursor(rightCursor);
                 rightCursor--;
             } catch (Exception e) {
                 rightCursor--;
@@ -178,15 +135,11 @@ public class Client {
         if (Character.isDigit(leftChar)) {
 
             try {
-                while (Character.isDigit(leftChar)) {
+                while (Character.isDigit(leftChar) || leftChar == '-') {
                     leftChar = expression.charAt(--leftCursor);
                 }
-                if (leftChar == '(') {
-                    cursor.setLeftCursor(leftCursor);
-                } else {
-                    cursor.setLeftCursor(leftCursor + 1);
-                }
 
+                cursor.setLeftCursor(leftCursor + 1);
                 leftCursor++;
 
             } catch (Exception e) {
