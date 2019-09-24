@@ -1,5 +1,3 @@
-package interpretator;
-
 import by.epamgroup.infhandler.exception.IllegalExpressionException;
 import by.epamgroup.infhandler.interpreter.Client;
 import by.epamgroup.infhandler.interpreter.Expression;
