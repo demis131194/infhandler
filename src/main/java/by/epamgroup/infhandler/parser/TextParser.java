@@ -1,23 +1,19 @@
 package by.epamgroup.infhandler.parser;
 
-import by.epamgroup.infhandler.composite.Component;
-import by.epamgroup.infhandler.composite.Paragraph;
-import by.epamgroup.infhandler.composite.Text;
-
-import java.util.stream.Stream;
+import by.epamgroup.infhandler.composite.*;
 
 public class TextParser implements Parser {
     private static final String PARAGRAPH_SPLIT = "(\\t)|([ ]{4})";
     private Parser nextParser = new ParagraphParser();
 
     @Override
-    public Text parse(String component) {
-        Text text = new Text();
-        component = component.trim();
-        String[] paragraphs = component.split(PARAGRAPH_SPLIT);
+    public Component parse(String str) {
+        ComponentImpl text = new ComponentImpl(TextPart.TEXT);
+        str = str.trim();
+        String[] paragraphs = str.split(PARAGRAPH_SPLIT);
 
-        for (String str : paragraphs) {
-            text.addComponent(nextParser.parse(str));
+        for (String paragraph : paragraphs) {
+            text.addComponent(nextParser.parse(paragraph));
         }
         return text;
     }

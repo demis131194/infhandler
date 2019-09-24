@@ -58,22 +58,22 @@ public class Client {
 
         switch (operation) {
             case NOT:
-                 resultExpression = new NotExpression(rightExpression);
+                 resultExpression = () -> ~rightExpression.interpret();
                 break;
             case LEFT_SHIFT:
-                resultExpression = new LeftBitShiftExpression(leftExpression, rightExpression);
+                resultExpression = () -> leftExpression.interpret() << rightExpression.interpret();
                 break;
             case RIGHT_SHIFT:
-                resultExpression = new RightBitShiftExpression(leftExpression, rightExpression);
+                resultExpression = () -> leftExpression.interpret() >> rightExpression.interpret();
                 break;
             case AND:
-                resultExpression = new AndExpression(leftExpression, rightExpression);
+                resultExpression = () -> leftExpression.interpret() & rightExpression.interpret();
                 break;
             case XOR:
-                resultExpression = new XorExpression(leftExpression, rightExpression);
+                resultExpression = () -> leftExpression.interpret() ^ rightExpression.interpret();
                 break;
             case OR:
-                resultExpression = new OrExpression(leftExpression, rightExpression);
+                resultExpression = () -> leftExpression.interpret() | rightExpression.interpret();
                 break;
         }
 

@@ -2,10 +2,12 @@ package by.epamgroup.infhandler.handler;
 
 import by.epamgroup.infhandler.comporator.ComponentCountComparator;
 import by.epamgroup.infhandler.composite.*;
+import by.epamgroup.infhandler.exception.ComponentHandlerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,16 +18,34 @@ public class ComponentHandler {
     private ComponentHandler() {
     }
 
-    public static Text sortParagraphsBySentencesCount(Text text) {
+    public static Component sortParagraphsBySentencesCount(ComponentImpl text) throws ComponentHandlerException {
+        logger.trace("In sortParagraphsBySentencesCount method.");
+        if (text.getTextPart() != TextPart.TEXT) {
+            throw new ComponentHandlerException("Only for TEXT!");
+        }
+
         Comparator<Component> comparator = new ComponentCountComparator();
         List<Component> components = text.getComponents();
 
         components.sort(comparator);
+        logger.trace("Out sortParagraphsBySentencesCount method.");
         return text;
     }
 
-    public static Text sortSentenceByWordCount(Text text) {
-        List<Component> paragraphs = text.getComponents();
+    public static Component sortSentenceByWordCount(ComponentImpl text) throws ComponentHandlerException {
+        List<Component> paragraphs;
+
+        switch (text.getTextPart()) {
+            case TEXT:
+                paragraphs = text.getComponents();
+                break;
+            case PARAGRAPH:
+                paragraphs = new ArrayList<>(Collections.singletonList(text));
+                break;
+            default:
+                throw new ComponentHandlerException("Only for TEXT and PARAGRAPH!");
+
+        }
 
         for (Component paragraph : paragraphs) {
             List<Component> sentences = paragraph.getComponents();
@@ -36,7 +56,7 @@ public class ComponentHandler {
         return text;
     }
 
-    public static Text sortWordsByLength(Text text) {
+    public static Component sortWordsByLength(Component text) {     // FIXME: 24.09.2019
         List<Component> paragraphs = text.getComponents();
 
         for (Component paragraph : paragraphs) {

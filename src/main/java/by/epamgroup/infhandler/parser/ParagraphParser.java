@@ -1,7 +1,8 @@
 package by.epamgroup.infhandler.parser;
 
 import by.epamgroup.infhandler.composite.Component;
-import by.epamgroup.infhandler.composite.Paragraph;
+import by.epamgroup.infhandler.composite.ComponentImpl;
+import by.epamgroup.infhandler.composite.TextPart;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,9 +13,9 @@ public class ParagraphParser implements Parser {
     private Parser nextParser = new SentenceParser();
 
     @Override
-    public Paragraph parse(String component) {
-        Matcher matcher = pattern.matcher(component);
-        Paragraph paragraph = new Paragraph();
+    public Component parse(String str) {
+        Matcher matcher = pattern.matcher(str);
+        ComponentImpl paragraph = new ComponentImpl(TextPart.PARAGRAPH);
 
         while (matcher.find()) {
             String comp = matcher.group();
