@@ -1,15 +1,23 @@
 package by.epamgroup.infhandler.composite;
 
+import by.epamgroup.infhandler.exception.IllegalExpressionException;
 import by.epamgroup.infhandler.interpreter.Client;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 public class Expression implements Component {
-    private static Client client = new Client();
+    private static Logger logger = LogManager.getLogger();
     private String expression;
 
     public Expression(String expression) {
         this.expression = expression;
+    }
+
+    @Override
+    public TextPart getTextPart() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -24,7 +32,14 @@ public class Expression implements Component {
 
     @Override
     public String collect() {
-        int result = client.calculate(expression).interpret();
-        return String.valueOf(result);
+        String result;
+        try {
+            int number = Client.evaluate(expression).interpret();
+            result = String.valueOf(number);
+        } catch (IllegalExpressionException e) {
+            logger.warn(e);
+            result = expression;
+        }
+        return result;
     }
 }

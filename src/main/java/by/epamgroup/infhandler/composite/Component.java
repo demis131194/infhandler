@@ -6,4 +6,5 @@ public interface Component {
     String collect();
     void addComponent(Component component);
     List<Component> getComponents();
+    TextPart getTextPart();
 }

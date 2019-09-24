@@ -10,6 +10,11 @@ public class Symbol implements Component {
     }
 
     @Override
+    public TextPart getTextPart() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void addComponent(Component component) {
         throw new UnsupportedOperationException();
     }

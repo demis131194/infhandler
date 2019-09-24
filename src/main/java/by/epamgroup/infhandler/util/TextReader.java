@@ -28,6 +28,5 @@ public class TextReader {
         logger.trace("Exit from " + TextReader.class.getSimpleName());
         String text = strings.stream().reduce("", (s, s2) -> s + "\n" + s2);
         return text.replaceAll("\\n", " ");
-//        return text;
     }
 }

@@ -14,6 +14,11 @@ public class Word implements Component {
     }
 
     @Override
+    public TextPart getTextPart() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String collect() {
         return word;
     }

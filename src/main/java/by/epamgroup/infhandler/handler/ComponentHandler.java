@@ -18,7 +18,7 @@ public class ComponentHandler {
     private ComponentHandler() {
     }
 
-    public static Component sortParagraphsBySentencesCount(ComponentImpl text) throws ComponentHandlerException {
+    public static Component sortParagraphsBySentencesCount(Component text) throws ComponentHandlerException {
         logger.trace("In sortParagraphsBySentencesCount method.");
         if (text.getTextPart() != TextPart.TEXT) {
             throw new ComponentHandlerException("Only for TEXT!");
@@ -28,11 +28,12 @@ public class ComponentHandler {
         List<Component> components = text.getComponents();
 
         components.sort(comparator);
-        logger.trace("Out sortParagraphsBySentencesCount method.");
+        logger.info("SortParagraphsBySentencesCount done.");
         return text;
     }
 
-    public static Component sortSentenceByWordCount(ComponentImpl text) throws ComponentHandlerException {
+    public static Component sortSentenceAtParagraphsByWordCount(Component text) throws ComponentHandlerException {
+        logger.trace("In sortSentenceByWordCount method.");
         List<Component> paragraphs;
 
         switch (text.getTextPart()) {
@@ -44,43 +45,53 @@ public class ComponentHandler {
                 break;
             default:
                 throw new ComponentHandlerException("Only for TEXT and PARAGRAPH!");
-
         }
 
         for (Component paragraph : paragraphs) {
             List<Component> sentences = paragraph.getComponents();
-
             sentences.sort(Comparator.comparingInt(o -> getTokensWhichContainWordFromSentence(o).size()));
         }
 
+        logger.info("SortSentenceByWordCount done.");
         return text;
     }
 
-    public static Component sortWordsByLength(Component text) {     // FIXME: 24.09.2019
-        List<Component> paragraphs = text.getComponents();
+    @SuppressWarnings("all")
+    public static Component sortWordsAtSentencesByLength(Component text) throws ComponentHandlerException {
+        logger.trace("In sortWordsByLength method.");
+        List<Component> sentences = new ArrayList<>();
 
-        for (Component paragraph : paragraphs) {
-            List<Component> sentences = paragraph.getComponents();
-
-            for (Component sentence : sentences) {
-                List<Component> tokens = getTokensWhichContainWordFromSentence(sentence);
-                List<String> words = getWordsFromTokenList(tokens);
-
-                words.sort(Comparator.comparingInt(String::length));
-
-                for(int i=0; i < tokens.size(); i++) {
-                    Word word = (Word) tokens.get(i)
-                            .getComponents()
-                            .stream()
-                            .filter(str -> str.getClass() == Word.class)
-                            .findFirst()
-                            .get();
-                    word.setWord(words.get(i));
-                }
-
-            }
+        switch (text.getTextPart()) {
+            case TEXT:
+                List<Component> paragraphs = text.getComponents();
+                paragraphs.forEach(component -> sentences.addAll(component.getComponents()));
+                break;
+            case PARAGRAPH:
+                sentences.addAll(text.getComponents());
+                break;
+            case SENTENCE:
+                sentences.add(text);
+            default:
+                throw new ComponentHandlerException("Only for TEXT, PARAGRAPH, SENTENCE");
         }
 
+        for (Component sentence : sentences) {
+            List<Component> tokens = getTokensWhichContainWordFromSentence(sentence);
+            List<String> words = getWordsFromTokenList(tokens);
+
+            words.sort(Comparator.comparingInt(String::length));
+
+            for(int i=0; i < tokens.size(); i++) {
+                Word word = (Word) tokens.get(i)
+                        .getComponents()
+                        .stream()
+                        .filter(str -> str.getClass() == Word.class)
+                        .findFirst()
+                        .get();
+                word.setWord(words.get(i));
+            }
+        }
+        logger.info("SortWordsByLength done.");
         return text;
     }
 
@@ -96,13 +107,14 @@ public class ComponentHandler {
                 .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("all")
     private static List<String> getWordsFromTokenList(List<Component> tokens) {
         List<String> words = new ArrayList<>();
 
         for (Component token : tokens) {
-            List<Component> wordsSymbolsExpressions = token.getComponents();
-            String word = wordsSymbolsExpressions.stream()
-                    .filter(str -> str.getClass() == Word.class)
+            List<Component> leafComponents = token.getComponents();
+            String word = leafComponents.stream()
+                    .filter(leafComponent -> leafComponent.getClass() == Word.class)
                     .findFirst()
                     .get()
                     .collect();

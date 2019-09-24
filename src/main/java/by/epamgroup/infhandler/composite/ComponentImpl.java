@@ -11,6 +11,7 @@ public class ComponentImpl implements Component {
         this.textPart = textPart;
     }
 
+    @Override
     public TextPart getTextPart() {
         return textPart;
     }

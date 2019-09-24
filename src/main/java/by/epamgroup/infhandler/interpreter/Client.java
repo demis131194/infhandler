@@ -1,18 +1,32 @@
 package by.epamgroup.infhandler.interpreter;
 
+import by.epamgroup.infhandler.exception.IllegalExpressionException;
 import by.epamgroup.infhandler.util.Cursor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Client {
+    private static Logger logger = LogManager.getLogger();
+    private static int countOperation;
+    private static final String NUMBER_REGEX = "-?[\\d]+";
 
-    public Expression calculate(String expression) {
-        expression = expression.replaceAll(">>", ">");
-        expression = expression.replaceAll("<<", "<");
-        return evaluate(expression);
+    private Client() {
     }
 
-    private Expression evaluate(String expression) {
+    public static Expression evaluate(String expression) throws IllegalExpressionException {
+        logger.trace("In evaluate.");
+        logger.info("Evaluated expression: " + expression);
+        expression = expression.replaceAll(">>", ">");
+        expression = expression.replaceAll("<<", "<");
+        Expression resultExpression = calculate(expression);
+        logger.info("Result of evaluate = " + resultExpression.interpret() + ", countOperation = " + countOperation);
+        countOperation = 0;
+        return resultExpression;
+    }
 
-        while (!expression.matches("-?[\\d]+")) {
+    private static Expression calculate(String expression) throws IllegalExpressionException {
+
+        while (!expression.matches(NUMBER_REGEX)) {
 
             while (expression.contains(Operation.NOT.getOperation())) {
                 expression = executeOperation(expression, Operation.NOT);
@@ -38,7 +52,8 @@ public class Client {
         return new NumberExpression(Integer.parseInt(expression));
     }
 
-    private String executeOperation(String expression, Operation operation) {
+    private static String executeOperation(String expression, Operation operation) throws IllegalExpressionException {
+        countOperation++;
         int operatorCursor = expression.indexOf(operation.getOperation());
         Cursor cursor;
         Expression leftExpression;
@@ -82,7 +97,7 @@ public class Client {
         return expression.replace(replacedPartExpression, String.valueOf(result));
     }
 
-    private Expression getRightExpression(String expression, Cursor cursor) {
+    private static Expression getRightExpression(String expression, Cursor cursor) throws IllegalExpressionException {
         int rightCursor = cursor.getRightCursor();
         int operatorCursor = cursor.getOperatorCursor();
 
@@ -120,13 +135,13 @@ public class Client {
             }
             cursor.setRightCursor(rightCursor + 1);
             String newExpression = expression.substring(operatorCursor + 2, rightCursor);
-            return evaluate(newExpression);
+            return calculate(newExpression);
         }
 
-        throw new IllegalArgumentException("Wrong expression!");
+        throw new IllegalExpressionException("Wrong expression!");
     }
 
-    private Expression getLeftExpression(String expression, Cursor cursor) {
+    private static Expression getLeftExpression(String expression, Cursor cursor) throws IllegalExpressionException {
         int leftCursor = cursor.getLeftCursor();
         int operatorCursor = cursor.getOperatorCursor();
 
@@ -166,9 +181,9 @@ public class Client {
             cursor.setLeftCursor(leftCursor);
             leftCursor++;
             String newExpression = expression.substring(leftCursor, operatorCursor - 1);
-            return evaluate(newExpression);
+            return calculate(newExpression);
         }
 
-        throw new IllegalArgumentException("Wrong expression!");
+        throw new IllegalExpressionException("Wrong expression!");
     }
 }
