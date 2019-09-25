@@ -3,11 +3,11 @@ package by.epamgroup.infhandler.composite;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ComponentImpl implements Component {
+public class Composite implements Component {
     private TextPart textPart;
     private List<Component> components = new ArrayList<>();
 
-    public ComponentImpl(TextPart textPart) {
+    public Composite(TextPart textPart) {
         this.textPart = textPart;
     }
 

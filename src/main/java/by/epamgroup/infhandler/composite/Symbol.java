@@ -3,6 +3,7 @@ package by.epamgroup.infhandler.composite;
 import java.util.List;
 
 public class Symbol implements Component {
+    private TextPart textPart = TextPart.SYMBOL;
     private String symbol;
 
     public Symbol(String symbol) {
@@ -11,7 +12,7 @@ public class Symbol implements Component {
 
     @Override
     public TextPart getTextPart() {
-        throw new UnsupportedOperationException();
+        return textPart;
     }
 
     @Override

@@ -1,24 +1,29 @@
 package by.epamgroup.infhandler.parser;
 
 import by.epamgroup.infhandler.composite.*;
+import by.epamgroup.infhandler.exception.IllegalExpressionException;
+import by.epamgroup.infhandler.interpreter.Client;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TokenParser implements Parser {
+public class TokenCompositeParser implements CompositeParser {
+    private static Logger logger = LogManager.getLogger();
+
     private static final String WORD_SYMBOL_MATCHER = "\\(?([\\w-']+)?\\)?(\\p{Punct}|\\.{3})?";
     private static final String WORD_SYMBOL_REGEX = "([\\w-]+)|\\p{Punct}|\\.{3}";
     private static final String EXPRESSION_REGEX = "([\\p{Punct}\\d]{3,})";
-    private static final String WORD_REGEX = "\\w([\\w-]+)?";
+    private static final String WORD_REGEX = "\\w([\\w-']+)?";
     private static final String SYMBOL_REGEX = "\\p{Punct}{1,3}";
     private static final Pattern WORD_SYMBOL_PATTERN = Pattern.compile(WORD_SYMBOL_REGEX);
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile(EXPRESSION_REGEX);
 
-
     @Override
     public Component parse(String str) {
         Matcher matcher;
-        ComponentImpl token = new ComponentImpl(TextPart.TOKEN);
+        Composite token = new Composite(TextPart.TOKEN);
 
         if (str.matches(WORD_SYMBOL_MATCHER)) {
             matcher = WORD_SYMBOL_PATTERN.matcher(str);
@@ -34,12 +39,24 @@ public class TokenParser implements Parser {
 
         } else if (str.matches(EXPRESSION_REGEX)) {
             matcher = EXPRESSION_PATTERN.matcher(str);
+
             if (matcher.find()) {
                 String expression = matcher.group();
-                token.addComponent(new Expression(expression));
+                expression = calculateExpression(expression);
+                token.addComponent(new Word(expression));
             }
         }
 
         return token;
+    }
+
+    private String calculateExpression(String expression) {
+        try {
+            int number = Client.evaluate(expression).interpret();
+            expression = String.valueOf(number);
+        } catch (IllegalExpressionException e) {
+            logger.warn(e);
+        }
+        return expression;
     }
 }

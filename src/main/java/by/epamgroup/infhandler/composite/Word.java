@@ -3,6 +3,7 @@ package by.epamgroup.infhandler.composite;
 import java.util.List;
 
 public class Word implements Component {
+    private TextPart textPart = TextPart.WORD;
     private String word;
 
     public Word(String word) {
@@ -15,7 +16,7 @@ public class Word implements Component {
 
     @Override
     public TextPart getTextPart() {
-        throw new UnsupportedOperationException();
+        return textPart;
     }
 
     @Override

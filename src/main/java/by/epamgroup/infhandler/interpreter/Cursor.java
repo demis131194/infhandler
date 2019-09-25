@@ -30,4 +30,20 @@ public class Cursor {
     public int getOperatorCursor() {
         return operatorCursor;
     }
+
+    public void decrementLeftCursor() {
+        leftCursor--;
+    }
+
+    public void incrementLeftCursor() {
+        leftCursor++;
+    }
+
+    public void decrementRightCursor() {
+        rightCursor--;
+    }
+
+    public void incrementRightCursor() {
+        rightCursor++;
+    }
 }

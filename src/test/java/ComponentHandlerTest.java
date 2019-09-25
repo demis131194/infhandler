@@ -2,7 +2,7 @@ import by.epamgroup.infhandler.composite.Component;
 import by.epamgroup.infhandler.exception.ComponentHandlerException;
 import by.epamgroup.infhandler.exception.TextReaderException;
 import by.epamgroup.infhandler.handler.ComponentHandler;
-import by.epamgroup.infhandler.parser.TextParser;
+import by.epamgroup.infhandler.parser.TextCompositeParser;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -14,7 +14,7 @@ public class ComponentHandlerTest {
 
     @BeforeMethod
     public void initText() throws TextReaderException {
-        componentText = new TextParser().parse(TextReaderTest.readTextFromFile());
+        componentText = new TextCompositeParser().parse(TextReaderTest.readTextFromFile());
     }
 
     @Test

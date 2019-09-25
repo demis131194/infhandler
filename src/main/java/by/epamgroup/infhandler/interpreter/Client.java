@@ -97,92 +97,108 @@ public class Client {
     }
 
     private static Expression getRightExpression(String expression, Cursor cursor) throws IllegalExpressionException {
-        int rightCursor = cursor.getRightCursor();
-        int operatorCursor = cursor.getOperatorCursor();
-
-        char rightChar = expression.charAt(rightCursor);
+        Expression rightExpression;
+        char rightChar = expression.charAt(cursor.getRightCursor());
 
         if (Character.isDigit(rightChar)) {
 
-            try {
-                while (Character.isDigit(rightChar) || rightChar == '-') {
-                    rightChar = expression.charAt(++rightCursor);
-                }
-
-                cursor.setRightCursor(rightCursor);
-                rightCursor--;
-            } catch (Exception e) {
-                rightCursor--;
-                cursor.setRightCursor(rightCursor + 1);
-            }
-
-            int number = Integer.parseInt(expression.substring(operatorCursor + 1, rightCursor + 1));
-            return new NumberExpression(number);
+            int number = getRightNumberFromExpression(expression, cursor);
+            rightExpression =  new NumberExpression(number);
 
         } else if (rightChar == '(') {
-            int breaksCount = 1;
-
-            while (breaksCount > 0) {
-                rightChar = expression.charAt(++rightCursor);
-
-                if (rightChar == ')') {
-                    breaksCount--;
-                } else if (rightChar == '(') {
-                    breaksCount++;
-                }
-
-            }
-            cursor.setRightCursor(rightCursor + 1);
-            String newExpression = expression.substring(operatorCursor + 2, rightCursor);
-            return calculate(newExpression);
+            String newExpression = getRightExpressionFromBounds(expression, cursor);
+            rightExpression =  calculate(newExpression);
+        } else {
+            throw new IllegalExpressionException("Wrong expression!");
         }
 
-        throw new IllegalExpressionException("Wrong expression!");
+        return rightExpression;
+    }
+
+    private static String getRightExpressionFromBounds(String expression, Cursor cursor) {
+        char rightChar;
+        int breaksCount = 1;
+
+        while (breaksCount > 0) {
+            cursor.incrementRightCursor();
+            rightChar = expression.charAt(cursor.getRightCursor());
+
+            if (rightChar == ')') {
+                breaksCount--;
+            } else if (rightChar == '(') {
+                breaksCount++;
+            }
+
+        }
+        cursor.incrementRightCursor();
+        return expression.substring(cursor.getOperatorCursor() + 2, cursor.getRightCursor() - 1);
+    }
+
+    private static int getRightNumberFromExpression(String expression, Cursor cursor) {
+        char rightChar = expression.charAt(cursor.getRightCursor());
+        try {
+            while (Character.isDigit(rightChar) || rightChar == '-') {
+                cursor.incrementRightCursor();
+                rightChar = expression.charAt(cursor.getRightCursor());
+            }
+
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+
+        return Integer.parseInt(expression.substring(cursor.getOperatorCursor() + 1, cursor.getRightCursor()));
     }
 
     private static Expression getLeftExpression(String expression, Cursor cursor) throws IllegalExpressionException {
-        int leftCursor = cursor.getLeftCursor();
-        int operatorCursor = cursor.getOperatorCursor();
+        Expression resultExpression;
 
-        char leftChar = expression.charAt(leftCursor);
+        char leftChar = expression.charAt(cursor.getLeftCursor());
 
         if (Character.isDigit(leftChar)) {
-
-            try {
-                while (Character.isDigit(leftChar) || leftChar == '-') {
-                    leftChar = expression.charAt(--leftCursor);
-                }
-
-                cursor.setLeftCursor(leftCursor + 1);
-                leftCursor++;
-
-            } catch (Exception e) {
-                leftCursor++;
-                cursor.setLeftCursor(leftCursor);
-            }
-
-            int number = Integer.parseInt(expression.substring(leftCursor, operatorCursor));
-            return new NumberExpression(number);
+            int number = getLeftNumberFromExpression(expression, cursor);
+            resultExpression = new NumberExpression(number);
 
         } else if (leftChar == ')') {
-            int breaksCount = 1;
+            String newExpression = getLeftExpressionInBounds(expression, cursor);
+            resultExpression =  calculate(newExpression);
 
-            while (breaksCount > 0) {
-                leftChar = expression.charAt(--leftCursor);
-
-                if (leftChar == ')') {
-                    breaksCount++;
-                } else if (leftChar == '(') {
-                    breaksCount--;
-                }
-
-            }
-            cursor.setLeftCursor(leftCursor);
-            leftCursor++;
-            String newExpression = expression.substring(leftCursor, operatorCursor - 1);
-            return calculate(newExpression);
+        } else {
+            throw new IllegalExpressionException("Wrong expression!");
         }
 
-        throw new IllegalExpressionException("Wrong expression!");
+        return resultExpression;
+    }
+
+    private static String getLeftExpressionInBounds(String expression, Cursor cursor) {
+        char leftChar;
+        int breaksCount = 1;
+
+        while (breaksCount > 0) {
+            cursor.decrementLeftCursor();
+            leftChar = expression.charAt(cursor.getLeftCursor());
+
+            if (leftChar == ')') {
+                breaksCount++;
+            } else if (leftChar == '(') {
+                breaksCount--;
+            }
+
+        }
+        return expression.substring(cursor.getLeftCursor() + 1, cursor.getOperatorCursor() - 1);
+    }
+
+    private static int getLeftNumberFromExpression(String expression, Cursor cursor) {
+        char leftChar = expression.charAt(cursor.getLeftCursor());
+
+        try {
+            while (Character.isDigit(leftChar) || leftChar == '-') {
+                cursor.decrementLeftCursor();
+                leftChar = expression.charAt(cursor.getLeftCursor());
+            }
+            cursor.incrementLeftCursor();
+        } catch (IndexOutOfBoundsException e) {
+            cursor.incrementLeftCursor();
+        }
+
+        return Integer.parseInt(expression.substring(cursor.getLeftCursor(), cursor.getOperatorCursor()));
     }
 }

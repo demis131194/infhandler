@@ -4,5 +4,7 @@ public enum TextPart {
     TEXT,
     PARAGRAPH,
     SENTENCE,
-    TOKEN
+    TOKEN,
+    WORD,
+    SYMBOL
 }
