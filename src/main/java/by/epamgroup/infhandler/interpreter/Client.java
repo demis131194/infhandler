@@ -1,7 +1,6 @@
 package by.epamgroup.infhandler.interpreter;
 
 import by.epamgroup.infhandler.exception.IllegalExpressionException;
-import by.epamgroup.infhandler.util.Cursor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

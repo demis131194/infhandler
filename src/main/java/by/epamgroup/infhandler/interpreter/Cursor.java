@@ -1,4 +1,4 @@
-package by.epamgroup.infhandler.util;
+package by.epamgroup.infhandler.interpreter;
 
 public class Cursor {
     private int leftCursor;
