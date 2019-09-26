@@ -20,6 +20,7 @@ public class ComponentHandler {
 
     public static Component sortParagraphsBySentencesCount(Component text) throws ComponentHandlerException {
         logger.trace("In sortParagraphsBySentencesCount method.");
+
         if (text.getTextPart() != TextPart.TEXT) {
             throw new ComponentHandlerException("Only for TEXT!");
         }
@@ -32,7 +33,7 @@ public class ComponentHandler {
         return text;
     }
 
-    public static Component sortSentenceAtParagraphsByWordCount(Component text) throws ComponentHandlerException {
+    public static Component sortSentenceInParagraphsByWordCount(Component text) throws ComponentHandlerException {
         logger.trace("In sortSentenceByWordCount method.");
         List<Component> paragraphs;
 
@@ -57,8 +58,8 @@ public class ComponentHandler {
     }
 
     @SuppressWarnings("all")
-    public static Component sortWordsAtSentencesByLength(Component text) throws ComponentHandlerException {
-        logger.trace("In sortWordsByLength method.");
+    public static Component sortWordsInSentencesByLength(Component text) throws ComponentHandlerException {
+        logger.trace("In sortWordsInSentencesByLength method.");
         List<Component> sentences = new ArrayList<>();
 
         switch (text.getTextPart()) {
@@ -71,6 +72,7 @@ public class ComponentHandler {
                 break;
             case SENTENCE:
                 sentences.add(text);
+                break;
             default:
                 throw new ComponentHandlerException("Only for TEXT, PARAGRAPH, SENTENCE");
         }

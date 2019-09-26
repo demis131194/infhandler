@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 
 public class Client {
     private static Logger logger = LogManager.getLogger();
-    private static int countOperation;
     private static final String NUMBER_REGEX = "-?[\\d]+";
 
     private Client() {
@@ -17,10 +16,7 @@ public class Client {
         logger.info("Evaluated expression: " + expression);
         expression = expression.replaceAll(">>", ">");
         expression = expression.replaceAll("<<", "<");
-        Expression resultExpression = calculate(expression);
-        logger.info("Result of evaluate = " + resultExpression.interpret() + ", countOperation = " + countOperation);
-        countOperation = 0;
-        return resultExpression;
+        return calculate(expression);
     }
 
     private static Expression calculate(String expression) throws IllegalExpressionException {
@@ -52,7 +48,6 @@ public class Client {
     }
 
     private static String executeOperation(String expression, Operation operation) throws IllegalExpressionException {
-        countOperation++;
         int operatorCursor = expression.indexOf(operation.getOperation());
         Cursor cursor;
         Expression leftExpression;

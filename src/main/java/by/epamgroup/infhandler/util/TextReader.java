@@ -25,8 +25,8 @@ public class TextReader {
         } catch (IOException e) {
             throw new TextReaderException("Some Exception", e);
         }
-        logger.trace("Exit from " + TextReader.class.getSimpleName());
         String text = strings.stream().reduce("", (s, s2) -> s + "\n" + s2);
+        logger.trace("Exit from " + TextReader.class.getSimpleName());
         return text.replaceAll("\\n", " ");
     }
 }

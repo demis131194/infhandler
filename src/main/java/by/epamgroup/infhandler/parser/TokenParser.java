@@ -9,27 +9,27 @@ import org.apache.logging.log4j.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TokenCompositeParser implements CompositeParser {
+public class TokenParser implements ComponentParser {
     private static Logger logger = LogManager.getLogger();
 
-    private static final String WORD_SYMBOL_MATCHER = "\\(?([\\w-']+)?\\)?(\\p{Punct}|\\.{3})?";
-    private static final String WORD_SYMBOL_REGEX = "([\\w-]+)|\\p{Punct}|\\.{3}";
-    private static final String EXPRESSION_REGEX = "([\\p{Punct}\\d]{3,})";
     private static final String WORD_REGEX = "\\w([\\w-']+)?";
-    private static final String SYMBOL_REGEX = "\\p{Punct}{1,3}";
-    private static final Pattern WORD_SYMBOL_PATTERN = Pattern.compile(WORD_SYMBOL_REGEX);
+    private static final String SYMBOL_REGEX = "\\p{Punct}|\\.{3}";
+    private static final String WORD_OR_SYMBOL_REGEX = String.format("(%s)|%s", WORD_REGEX, SYMBOL_REGEX);
+    private static final String WORD_AND_SYMBOL_REGEX = "\\(?([\\w-']+)?\\)?(\\p{Punct}|\\.{3})?";
+    private static final String EXPRESSION_REGEX = "([\\p{Punct}\\d]{3,})";
+    private static final Pattern WORD_SYMBOL_PATTERN = Pattern.compile(WORD_OR_SYMBOL_REGEX);
     private static final Pattern EXPRESSION_PATTERN = Pattern.compile(EXPRESSION_REGEX);
 
     @Override
     public Component parse(String str) {
-        Matcher matcher;
-        Composite token = new Composite(TextPart.TOKEN);
+        Component token = new Composite(TextPart.TOKEN);
 
-        if (str.matches(WORD_SYMBOL_MATCHER)) {
-            matcher = WORD_SYMBOL_PATTERN.matcher(str);
+        if (str.matches(WORD_AND_SYMBOL_REGEX)) {
+            Matcher matcher = WORD_SYMBOL_PATTERN.matcher(str);
 
             while (matcher.find()) {
                 String wordOrSymbol = matcher.group();
+
                 if (wordOrSymbol.matches(WORD_REGEX)) {
                     token.addComponent(new Word(wordOrSymbol));
                 } else if (wordOrSymbol.matches(SYMBOL_REGEX)) {
@@ -38,7 +38,7 @@ public class TokenCompositeParser implements CompositeParser {
             }
 
         } else if (str.matches(EXPRESSION_REGEX)) {
-            matcher = EXPRESSION_PATTERN.matcher(str);
+            Matcher matcher = EXPRESSION_PATTERN.matcher(str);
 
             if (matcher.find()) {
                 String expression = matcher.group();
@@ -46,7 +46,6 @@ public class TokenCompositeParser implements CompositeParser {
                 token.addComponent(new Word(expression));
             }
         }
-
         return token;
     }
 

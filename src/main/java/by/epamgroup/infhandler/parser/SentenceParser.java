@@ -4,19 +4,19 @@ import by.epamgroup.infhandler.composite.Component;
 import by.epamgroup.infhandler.composite.Composite;
 import by.epamgroup.infhandler.composite.TextPart;
 
-public class SentenceCompositeParser implements CompositeParser {
+public class SentenceParser implements ComponentParser {
     private static final String TOKEN_SPLIT = "\\s+";
-    private CompositeParser nextCompositeParser = new TokenCompositeParser();
+    private static ComponentParser nextComponentParser = new TokenParser();
 
     @Override
     public Component parse(String str) {
-        Composite sentence = new Composite(TextPart.SENTENCE);
+        Component sentence = new Composite(TextPart.SENTENCE);
         str = str.strip();
 
         String[] tokens = str.split(TOKEN_SPLIT);
 
         for (String token : tokens) {
-            sentence.addComponent(nextCompositeParser.parse(token));
+            sentence.addComponent(nextComponentParser.parse(token));
         }
         return sentence;
     }

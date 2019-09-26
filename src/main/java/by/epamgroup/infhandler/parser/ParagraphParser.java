@@ -7,19 +7,19 @@ import by.epamgroup.infhandler.composite.TextPart;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ParagraphCompositeParser implements CompositeParser {
+public class ParagraphParser implements ComponentParser {
     private static final String SENTENCE_REGEX = "\\p{Alnum}.+?(!|\\?|\\.{3}|\\.)";
     private static Pattern pattern = Pattern.compile(SENTENCE_REGEX);
-    private CompositeParser nextCompositeParser = new SentenceCompositeParser();
+    private static ComponentParser nextComponentParser = new SentenceParser();
 
     @Override
     public Component parse(String str) {
         Matcher matcher = pattern.matcher(str);
-        Composite paragraph = new Composite(TextPart.PARAGRAPH);
+        Component paragraph = new Composite(TextPart.PARAGRAPH);
 
         while (matcher.find()) {
             String comp = matcher.group();
-            paragraph.addComponent(nextCompositeParser.parse(comp));
+            paragraph.addComponent(nextComponentParser.parse(comp));
         }
         return paragraph;
     }
